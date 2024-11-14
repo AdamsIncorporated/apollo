@@ -1,9 +1,13 @@
 use actix_web::{rt, web, App, Error, HttpRequest, HttpResponse, HttpServer};
 use actix_ws::AggregatedMessage;
+use env_logger;
 use futures_util::StreamExt as _;
+use log::{debug, error, info};
 
 async fn echo(req: HttpRequest, stream: web::Payload) -> Result<HttpResponse, Error> {
     let (res, mut session, stream) = actix_ws::handle(&req, stream)?;
+    
+    info!("WebSocket connection established for: {}", req.peer_addr().unwrap());
 
     let mut stream = stream
         .aggregate_continuations()
