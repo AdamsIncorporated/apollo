@@ -3,7 +3,9 @@ use actix_ws::AggregatedMessage;
 use futures_util::StreamExt as _;
 use log::{info, error};  // Import error level for logging
 use std::sync::{Arc, Mutex};
-use env_logger;  // Import env_logger
+use env_logger;
+use dotenv::dotenv;
+use std::env;
 
 #[derive(Clone)]
 struct AppState {
@@ -75,7 +77,12 @@ async fn echo(req: HttpRequest, stream: web::Payload, data: web::Data<AppState>)
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    // Initialize the logger
+
+    // load environment vars
+    dotenv().ok();
+
+    let log_level = env::var("RUST_LOG").unwrap_or_else(|_| "INFO".to_string());
+    std::env::set_var("RUST_LOG", log_level);
     env_logger::init();
 
     // Shared application state with a counter
