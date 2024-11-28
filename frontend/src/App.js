@@ -5,8 +5,8 @@ import { MessageSender } from './MessageSender';
 function App() {
   return (
     <WebSocketProvider>
-      <div className="App">
-        <h1>WebSocket Counter Example</h1>
+      <div className="App" style={{margin: '5%'}}>
+        <h1>WebSocket Stock Example</h1>
         <MessageSender /> 
       </div>
     </WebSocketProvider>

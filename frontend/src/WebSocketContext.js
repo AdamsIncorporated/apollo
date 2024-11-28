@@ -7,7 +7,6 @@ const WebSocketContext = createContext(null);
 export const WebSocketProvider = ({ children }) => {
     const [socket, setSocket] = useState(null);
     const [message, setMessage] = useState(null);
-    const [counter, setCounter] = useState(0);  // Counter state for the server's counter
 
     // Establish WebSocket connection
     useEffect(() => {
@@ -20,15 +19,7 @@ export const WebSocketProvider = ({ children }) => {
         ws.onmessage = (event) => {
             console.log('Message from server:', event.data);
             const serverMessage = event.data;
-
-            // Parse the server response to extract the counter
-            const parts = serverMessage.split(' | Counter: ');
-            if (parts.length === 2) {
-                setMessage(parts[0]);
-                setCounter(parseInt(parts[1], 10));  // Update the counter
-            } else {
-                setMessage(serverMessage);  // In case the message format changes
-            }
+            setMessage(serverMessage);
         };
 
         ws.onerror = (error) => {
@@ -56,7 +47,7 @@ export const WebSocketProvider = ({ children }) => {
     };
 
     return (
-        <WebSocketContext.Provider value={{ sendMessage, message, counter }}>
+        <WebSocketContext.Provider value={{ sendMessage, message}}>
             {children}
         </WebSocketContext.Provider>
     );
