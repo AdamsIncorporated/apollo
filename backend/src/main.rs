@@ -1,104 +1,108 @@
-use actix_web::{rt, web, App, Error, HttpRequest, HttpResponse, HttpServer};
-use actix_ws::AggregatedMessage;
-use futures_util::StreamExt as _;
-use log::{info, error};  // Import error level for logging
-use std::sync::{Arc, Mutex};
-use env_logger;
-use dotenv::dotenv;
-use std::env;
+use actix::*;
+use actix_web::{web, App, Error, HttpRequest, HttpResponse, HttpServer};
+use actix_cors::Cors;
+use actix_web_actors::ws;
+use log::{error, info};
+use std::time::{Duration, Instant};
 
-#[derive(Clone)]
-struct AppState {
-    counter: Arc<Mutex<u32>>,  // Shared counter state
+/// Define a WebSocket actor
+struct CounterWebSocket {
+    counter: u64,
+    hb: Instant, // for tracking the heartbeat
 }
 
-async fn echo(req: HttpRequest, stream: web::Payload, data: web::Data<AppState>) -> Result<HttpResponse, Error> {
-    let (res, mut session, stream) = actix_ws::handle(&req, stream)?;
-
-    // Log when WebSocket connection is established
-    if let Some(peer_addr) = req.peer_addr() {
-        info!("WebSocket connection established for: {}", peer_addr);
-    } else {
-        info!("WebSocket connection established, but peer address could not be determined");
+impl CounterWebSocket {
+    fn new() -> Self {
+        info!("Creating new WebSocket actor"); // Log when a new WebSocket actor is created
+        CounterWebSocket {
+            counter: 0,
+            hb: Instant::now(),
+        }
     }
 
-    let mut stream = stream
-        .aggregate_continuations()
-        .max_continuation_size(2_usize.pow(20));
+    /// Start a recurring task to send the counter to the client
+    fn start_counter(&mut self, ctx: &mut ws::WebsocketContext<Self>) {
+        info!("Starting counter task"); // Log when the counter task starts
+        ctx.run_interval(Duration::from_secs(1), |act, ctx| {
+            act.counter += 1;
+            ctx.text(act.counter.to_string());
+        });
+    }
+}
 
-    // Start task but don't wait for it
-    rt::spawn(async move {
-        // Receive messages from WebSocket
-        while let Some(msg) = stream.next().await {
-            match msg {
-                Ok(AggregatedMessage::Text(text)) => {
-                    // Log received text message
-                    info!("Received text message: {}", text);
-                    // Increment counter
-                    let mut counter = data.counter.lock().unwrap();
-                    *counter += 1;
-                    let counter_value = *counter;
-                    
-                    // Send updated counter back to the client
-                    let response_message = format!("{} | Counter: {}", text, counter_value);
-                    if let Err(e) = session.text(response_message).await {
-                        error!("Error sending text message: {}", e);  // Use error level for failures
-                    }
-                }
+impl Actor for CounterWebSocket {
+    type Context = ws::WebsocketContext<Self>;
 
-                Ok(AggregatedMessage::Binary(bin)) => {
-                    // Log received binary message
-                    info!("Received binary message with size: {}", bin.len());
-                    // Echo binary message
-                    if let Err(e) = session.binary(bin).await {
-                        error!("Error sending binary message: {}", e);  // Use error level for failures
-                    }
-                }
+    fn started(&mut self, ctx: &mut Self::Context) {
+        info!("WebSocket connection started"); // Log when the connection starts
+        self.start_counter(ctx); // Start the counter when the WebSocket is connected
+    }
 
-                Ok(AggregatedMessage::Ping(msg)) => {
-                    // Log received ping message
-                    info!("Received PING message: {:?}", msg);
-                    // Respond to PING frame with PONG frame
-                    if let Err(e) = session.pong(&msg).await {
-                        error!("Error sending PONG message: {}", e);  // Use error level for failures
-                    }
-                }
+    fn stopping(&mut self, _: &mut Self::Context) -> Running {
+        info!("WebSocket connection stopped"); // Log when the connection stops
+        Running::Stop
+    }
+}
 
-                _ => {
-                    // Log unhandled message type
-                    info!("Received an unsupported message type");
-                }
+/// Handle WebSocket messages
+impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for CounterWebSocket {
+    fn handle(
+        &mut self,
+        msg: Result<ws::Message, ws::ProtocolError>,
+        ctx: &mut ws::WebsocketContext<Self>,
+    ) {
+        match msg {
+            Ok(ws::Message::Ping(msg)) => {
+                self.hb = Instant::now();
+                info!("Received Ping message: {:?}", msg); // Log Ping message
+                ctx.pong(&msg);
             }
+            Ok(ws::Message::Pong(_)) => {
+                self.hb = Instant::now();
+                info!("Received Pong message"); // Log Pong message
+            }
+            Ok(ws::Message::Text(text)) => {
+                info!("Received Text message: {}", text); // Log received Text message
+            }
+            Ok(ws::Message::Binary(_)) => {
+                info!("Received Binary message"); // Log received Binary message
+            }
+            Ok(ws::Message::Close(reason)) => {
+                info!("Received Close message: {:?}", reason); // Log Close message
+                ctx.close(reason);
+                ctx.stop();
+            }
+            Ok(ws::Message::Continuation(_)) => {
+                info!("Received Continuation message"); // Log Continuation message (if needed)
+            }
+            Err(e) => {
+                error!("Error in WebSocket message: {:?}", e); // Log any error
+            }
+            _ => (), // Ignore NOP messages
         }
-    });
+    }
+}
 
-    Ok(res)
+/// WebSocket handler
+async fn ws_handler(req: HttpRequest, stream: web::Payload) -> Result<HttpResponse, Error> {
+    info!("WebSocket request received: {:?}", req); // Log incoming WebSocket request
+    let ws = CounterWebSocket::new();
+    ws::start(ws, &req, stream)
 }
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-
-    // load environment vars
-    dotenv().ok();
-
-    let log_level = env::var("RUST_LOG").unwrap_or_else(|_| "INFO".to_string());
-    std::env::set_var("RUST_LOG", log_level);
+    std::env::set_var("RUST_LOG", "info");
     env_logger::init();
 
-    // Shared application state with a counter
-    let app_state = web::Data::new(AppState {
-        counter: Arc::new(Mutex::new(0)),  // Initial counter value
-    });
+    info!("Starting server...");
 
-    // Log server start
-    info!("Starting server on http://127.0.0.1:8080");
-
-    HttpServer::new(move || {
+    HttpServer::new(|| {
         App::new()
-            .app_data(app_state.clone())  // Pass the state to the route
-            .route("/echo", web::get().to(echo))
+            .wrap(Cors::default().allowed_origin("http://localhost:3000"))
+            .route("/echo/", web::get().to(ws_handler))
     })
-    .bind(("127.0.0.1", 8080))?
+    .bind("127.0.0.1:8080")?
     .run()
     .await
 }

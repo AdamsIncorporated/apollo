@@ -1,59 +1,48 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
-// Create a WebSocket Context
-const WebSocketContext = createContext(null);
+const WebSocketCounter = () => {
+  const [counter, setCounter] = useState(0);
+  const [ws, setWs] = useState(null);
 
-// WebSocket Provider Component
-export const WebSocketProvider = ({ children }) => {
-    const [socket, setSocket] = useState(null);
-    const [message, setMessage] = useState(null);
-
-    // Establish WebSocket connection
-    useEffect(() => {
-        const ws = new WebSocket('ws://127.0.0.1:8080/echo');
-
-        ws.onopen = () => {
-            console.log('WebSocket connection established');
-        };
-
-        ws.onmessage = (event) => {
-            console.log('Message from server:', event.data);
-            const serverMessage = event.data;
-            setMessage(serverMessage);
-        };
-
-        ws.onerror = (error) => {
-            console.log('WebSocket error:', error);
-        };
-
-        ws.onclose = () => {
-            console.log('WebSocket connection closed');
-        };
-
-        setSocket(ws);
-
-        // Cleanup WebSocket connection on component unmount
-        return () => {
-            ws.close();
-        };
-    }, []);
-
-    // Send a message to the WebSocket server
-    const sendMessage = (msg) => {
-        if (socket && socket.readyState === WebSocket.OPEN) {
-            console.log('Sending message to server:', msg);
-            socket.send(msg);
-        }
+  useEffect(() => {
+    // Create WebSocket connection when the component is mounted
+    const socket = new WebSocket('ws://localhost:8080/echo/');
+    
+    // Set up event listeners for WebSocket events
+    socket.onopen = () => {
+      console.log('WebSocket connected');
     };
 
-    return (
-        <WebSocketContext.Provider value={{ sendMessage, message}}>
-            {children}
-        </WebSocketContext.Provider>
-    );
+    socket.onmessage = (event) => {
+      // Update counter state when a message is received
+      setCounter(event.data);
+    };
+
+    socket.onclose = () => {
+      console.log('WebSocket closed');
+    };
+
+    socket.onerror = (error) => {
+      console.error('WebSocket error: ', error);
+    };
+
+    // Save WebSocket instance in state
+    setWs(socket);
+
+    // Cleanup WebSocket connection when the component unmounts
+    return () => {
+      if (socket) {
+        socket.close();
+      }
+    };
+  }, []);
+
+  return (
+    <div className="p-4 text-center">
+      <h1 className="text-3xl font-bold mb-4">WebSocket Counter</h1>
+      <p className="text-xl">Counter: {counter}</p>
+    </div>
+  );
 };
 
-// Custom hook to access the WebSocket context
-export const useWebSocket = () => {
-    return useContext(WebSocketContext);
-};
+export default WebSocketCounter;

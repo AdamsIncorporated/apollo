@@ -1,15 +1,11 @@
-import React from 'react';
-import { WebSocketProvider } from './WebSocketContext';
-import { MessageSender } from './MessageSender';
+import React from "react";
+import WebSocketCounter from "./WebSocketContext";
 
 function App() {
   return (
-    <WebSocketProvider>
-      <div className="App" style={{margin: '5%'}}>
-        <h1>WebSocket Stock Example</h1>
-        <MessageSender /> 
-      </div>
-    </WebSocketProvider>
+    <div className="App" style={{ margin: "5%" }}>
+      <WebSocketCounter />
+    </div>
   );
 }
 
