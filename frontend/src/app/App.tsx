@@ -1,5 +1,5 @@
 import React from "react";
-import WebSocketCounter from "./WebSocketContext";
+import WebSocketCounter from "../components/WebSocketContext";
 
 function App() {
   return (

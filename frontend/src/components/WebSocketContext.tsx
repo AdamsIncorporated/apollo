@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 const WebSocketCounter = () => {
   const [counter, setCounter] = useState(0);
-  const [ws, setWs] = useState(null);
+  const [ws, setWs] = useState<WebSocket | null> (null);
 
   useEffect(() => {
     // Create WebSocket connection when the component is mounted
