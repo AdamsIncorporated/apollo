@@ -9,7 +9,7 @@ module.exports = {
   devtool: "source-map",
   devServer: {
     static: {
-      directory: path.join(__dirname, "public"),
+      directory: path.join(__dirname, "src", "assets"),
     },
     historyApiFallback: true,
     // proxy: [
@@ -52,7 +52,7 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       template: "./src/app/index.html",
-      favicon: "./src/assets/favicon.png",
+      favicon: "./src/assets/images/favicon.jpg",
     }),
     new webpack.DefinePlugin({
       "process.env.PUBLIC_URL": JSON.stringify("/"),

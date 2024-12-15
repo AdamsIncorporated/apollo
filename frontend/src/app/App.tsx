@@ -3,7 +3,7 @@ import WebSocketCounter from "../components/WebSocketContext";
 
 function App() {
   return (
-    <div className="App" style={{ margin: "5%" }}>
+    <div>
       <WebSocketCounter />
     </div>
   );
