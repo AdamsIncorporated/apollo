@@ -99,7 +99,7 @@ async fn main() -> std::io::Result<()> {
 
     HttpServer::new(|| {
         App::new()
-            .wrap(Cors::default().allowed_origin("http://localhost:3000"))
+            .wrap(Cors::default().allowed_origin("http://localhost:8080"))
             .route("/echo/", web::get().to(ws_handler))
     })
     .bind("127.0.0.1:8080")?

@@ -2,13 +2,35 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "type": "cppvsdbg",
+      "request": "launch",
+      "name": "Debug Bluebonnet - Backend",
+      "program": "${workspaceFolder}/backend/target/debug/backend.exe",
+      "args": [],
+      "cwd": "${workspaceRoot}/backend",
+      "envFile": "${workspaceFolder}/backend/.env",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "openOnSessionStart",
+      "preLaunchTask": "Start Backend",
+      "stopAtEntry": false
+    },
+    {
       "name": "Debug Bluebonnet - Frontend",
       "type": "firefox",
       "request": "attach",
       "webRoot": "${workspaceFolder}/frontend",
       "url": "http://localhost:8080",
+      "port": 6000,
       "preLaunchTask": "Start Frontend"
     }
   ],
-
+  "compounds": [
+    {
+      "name": "Debug Bluebonnet",
+      "configurations": [
+        "Debug Bluebonnet - Backend",
+        "Debug Bluebonnet - Frontend"
+      ]
+    }
+  ]
 }
