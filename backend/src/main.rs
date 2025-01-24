@@ -2,7 +2,8 @@ use dotenv::dotenv;
 use reqwest::header::{HeaderMap, HeaderValue};
 use std::env;
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
     dotenv().ok();
 
     let mut headers = HeaderMap::new();
@@ -19,17 +20,33 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     headers.insert("User-Agent", user_agent_header);
 
-    // Use the headers in your request
     let client = reqwest::Client::new();
     let response = client
         .get("https://www.example.com")
         .headers(headers)
-        .send()?;
+        .send()
+        .await;
 
-    // Handle the response
-    println!("Status: {}", response.status());
-    println!("Headers:\n{:?}", response.headers());
-    println!("Body:\n{}", response.text()?);
+    match response {
+        Ok(resp) => {
+            if resp.status().is_success() {
+                println!("Status: {}", resp.status());
+                println!("Headers:\n{:?}", resp.headers());
+
+                match resp.text().await {
+                    Ok(body) => println!("Body:\n{}", body),
+                    Err(e) => println!("Error reading body: {}", e),
+                }
+            } else {
+                // If the response has an error status
+                println!("Request failed with status: {}", resp.status());
+            }
+        }
+        Err(e) => {
+            // If there was an error sending the request
+            println!("Request error: {}", e);
+        }
+    }
 
     Ok(())
 }
