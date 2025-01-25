@@ -6,23 +6,14 @@ use std::env;
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     dotenv().ok();
 
+    let user_agent_header = HeaderValue::from_str(&env::var("USER_AGENT")?)?;
     let mut headers = HeaderMap::new();
-    let user_agent: String = match env::var("USER_AGENT") {
-        Ok(user) => user,
-        Err(_) => {
-            return Err("USER_AGENT environment variable not found.".into());
-        }
-    };
-    let user_agent_header: HeaderValue = match HeaderValue::from_str(&user_agent) {
-        Ok(key) => key,
-        Err(error) => return Err(format!("Invalid USER_AGENT header value: {}", error).into()),
-    };
-
+    
     headers.insert("User-Agent", user_agent_header);
 
     let client = reqwest::Client::new();
     let response = client
-        .get("https://www.example.com")
+        .get("https://finance.yahoo.com/quote/TSLA/")
         .headers(headers)
         .send()
         .await;
