@@ -16,7 +16,7 @@
     },
     {
       "name": "Debug Bluebonnet - Frontend",
-      "type": "firefox",
+      "type": "chrome",
       "request": "attach",
       "webRoot": "${workspaceFolder}/frontend",
       "url": "http://localhost:8080",
