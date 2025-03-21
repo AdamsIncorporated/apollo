@@ -1,0 +1,90 @@
+{
+  "timeseries": {
+    "error": null,
+    "result": [
+      {
+        "annualTaxEffectOfUnusualItems": [
+          {
+            "asOfDate": "2021-12-31",
+            "currencyCode": "USD",
+            "dataId": 20419,
+            "periodType": "12M",
+            "reportedValue": {
+              "fmt": "2.97M",
+              "raw": 2970000.0
+            }
+          },
+          {
+            "asOfDate": "2022-12-31",
+            "currencyCode": "USD",
+            "dataId": 20419,
+            "periodType": "12M",
+            "reportedValue": {
+              "fmt": "-14.08M",
+              "raw": -14080000.0
+            }
+          },
+          {
+            "asOfDate": "2023-12-31",
+            "currencyCode": "USD",
+            "dataId": 20419,
+            "periodType": "12M",
+            "reportedValue": {
+              "fmt": "0.00",
+              "raw": 0.0
+            }
+          },
+          {
+            "asOfDate": "2024-12-31",
+            "currencyCode": "USD",
+            "dataId": 20419,
+            "periodType": "12M",
+            "reportedValue": {
+              "fmt": "-136.80M",
+              "raw": -136800000.0
+            }
+          }
+        ],
+        "meta": {
+          "symbol": [
+            "TSLA"
+          ],
+          "type": [
+            "annualTaxEffectOfUnusualItems"
+          ]
+        },
+        "timestamp": [
+          1640908800,
+          1672444800,
+          1703980800,
+          1735603200
+        ]
+      },
+      {
+        "meta": {
+          "symbol": [
+            "TSLA"
+          ],
+          "type": [
+            "trailingTaxEffectOfUnusualItems"
+          ]
+        },
+        "timestamp": [
+          1735603200
+        ],
+        "trailingTaxEffectOfUnusualItems": [
+          {
+            "asOfDate": "2024-12-31",
+            "currencyCode": "USD",
+            "dataId": 20419,
+            "periodType": "TTM",
+            "reportedValue": {
+              "fmt": "-136.80M",
+              "raw": -136800000.0
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
