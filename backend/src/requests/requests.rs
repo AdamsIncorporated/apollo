@@ -10,10 +10,28 @@ pub async fn extract_financial_data(symbols: &str) -> Result<Value, Box<dyn Erro
 
     let response = reqwest::get(&url).await?;
 
-    if response.status().is_success() {
-        let json: Value = response.json().await?;
-        Ok(json)
-    } else {
-        Err(format!("HTTP request failed with status: {}", response.status()).into())
+    let text_result = response.text().await;
+
+    match text_result {
+        Ok(text) => {
+            match serde_json::from_str(&text) {
+                Ok(json_value) => {
+                    let json: Value = json_value;
+                    // Now you can work with the `json` Value
+                    println!("Parsed JSON: {:?}", json);
+                }
+                Err(e) => {
+                    eprintln!("Error parsing JSON: {}", e);
+                    //Handle error.
+                    return Ok(()); //or return Err(some_error);
+                }
+            }
+        }
+        Err(e) => {
+            eprintln!("Error getting response text: {}", e);
+            //Handle error.
+            return Ok(); //or return Err(e);
+        }
     }
+    Ok()
 }
