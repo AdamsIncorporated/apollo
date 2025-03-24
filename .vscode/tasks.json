@@ -33,7 +33,7 @@
     {
       "label": "Start Frontend",
       "type": "shell",
-      "command": "start firefox.exe --remote-debugging-port=6000; npm start",
+      "command": "start firefox.exe --remote-debugging-port=9222; npm start",
       "options": {
         "cwd": "${workspaceFolder}/frontend"
       },
