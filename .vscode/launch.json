@@ -8,7 +8,6 @@
       "program": "${workspaceFolder}/backend/target/debug/backend.exe",
       "args": [],
       "cwd": "${workspaceRoot}/backend",
-      "envFile": "${workspaceFolder}/backend/.env",
       "console": "integratedTerminal",
       "internalConsoleOptions": "openOnSessionStart",
       "preLaunchTask": "Start Backend",
