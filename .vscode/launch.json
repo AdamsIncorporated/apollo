@@ -4,7 +4,7 @@
     {
       "type": "cppvsdbg",
       "request": "launch",
-      "name": "Debug Bluebonnet - Backend",
+      "name": "Debug Apollo - Backend",
       "program": "${workspaceFolder}/backend/target/debug/backend.exe",
       "args": [],
       "cwd": "${workspaceRoot}/backend",
@@ -15,7 +15,7 @@
       "stopAtEntry": false
     },
     {
-      "name": "Debug Bluebonnet - Frontend",
+      "name": "Debug Apollo - Frontend",
       "type": "chrome",
       "request": "attach",
       "webRoot": "${workspaceFolder}/frontend",
@@ -26,10 +26,10 @@
   ],
   "compounds": [
     {
-      "name": "Debug Bluebonnet",
+      "name": "Debug Apollo",
       "configurations": [
-        "Debug Bluebonnet - Backend",
-        "Debug Bluebonnet - Frontend"
+        "Debug Apollo - Backend",
+        "Debug Apollo - Frontend"
       ]
     }
   ]
