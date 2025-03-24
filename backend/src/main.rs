@@ -1,14 +1,11 @@
-use dotenv::dotenv;
 mod requests;
-use requests::extract_financial_data;
+use requests::fundamentals::fundamentals::extract_financial_data;
 use serde_json::to_string_pretty;
 use tokio::fs::File;
 use tokio::io::AsyncWriteExt;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    dotenv().ok();
-
     match extract_financial_data().await {
         Ok(json_data) => {
             let file_path = "financial_data.json";

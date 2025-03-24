@@ -8,7 +8,7 @@ interface SlidingSidebarProps {
 const SlidingSidebar: React.FC<SlidingSidebarProps> = ({ isOpen, onClose }) => {
   return (
     <div
-      className={`fixed top-0 left-0 w-80 h-screen bg-gray-100 p-5 shadow-lg transition-all duration-300 ease-in-out z-1000 ${
+      className={`fixed top-0 left-0 w-80 h-screen bg-slate-900 p-5 shadow-lg transition-all duration-300 ease-in-out z-1000 ${
         isOpen ? 'translate-x-0' : '-translate-x-full'
       }`}
     >
@@ -40,9 +40,6 @@ const SlidingSidebarDemo: React.FC = () => {
         {isSidebarOpen ? 'Close Sidebar' : 'Open Sidebar'}
       </button>
       <SlidingSidebar isOpen={isSidebarOpen} onClose={toggleSidebar} />
-      <div className="p-5">
-        <p>Main Content. Click the button to toggle the sidebar.</p>
-      </div>
     </div>
   );
 };

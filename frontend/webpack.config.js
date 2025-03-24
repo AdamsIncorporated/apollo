@@ -52,7 +52,7 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       template: "./src/app/index.html",
-      favicon: "./src/assets/images/favicon.jpg",
+      favicon: "./src/assets/images/favicon.png",
     }),
     new webpack.DefinePlugin({
       "process.env.PUBLIC_URL": JSON.stringify("/"),
