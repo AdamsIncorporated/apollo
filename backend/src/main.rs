@@ -1,14 +1,11 @@
 mod requests;
-use requests::auth::client::create_yahoo_finance_client;
+mod utils;
+use requests::markets::markets::fetch_market_data;
+use utils::save_json_to_file;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    match create_yahoo_finance_client().await {
-        Ok(client) => {
-            client;
-        }
-        Err(e) => eprintln!("Error: {}", e),
-    }
-
+    let json = fetch_market_data().await?;
+    let _ = save_json_to_file(&json, "output.json").await;
     Ok(())
 }

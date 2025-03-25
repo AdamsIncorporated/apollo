@@ -3,6 +3,7 @@ use std::error::Error;
 use serde_json::Value;
 use urlencoding::encode;
 
+#[allow(dead_code)]
 pub async fn extract_financial_data() -> Result<Value, Box<dyn Error>> {
     let metrics = "annualTaxEffectOfUnusualItems,trailingTaxEffectOfUnusualItems,..."; // Your long metric string
     let encoded_metrics = encode(metrics);
