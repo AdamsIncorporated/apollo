@@ -1,2 +1,5 @@
-use crate::requesta::constants;
+use crate::requests::constants;
 
+pub struct Sector {
+    
+}

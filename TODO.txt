@@ -1,3 +1,0 @@
-- git gud at cpp
-- create frontend layout
-- get api for yahoo finance in cpp
