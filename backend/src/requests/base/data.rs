@@ -1,4 +1,5 @@
 use crate::constants::USER_AGENTS;
+use crate::logger;
 use lru;
 use rand::Rng;
 use reqwest::Client;
@@ -44,13 +45,48 @@ pub impl YfData {
         }
     }
 
-    fn set_cookie_strategy(&self, strategy: &str, have_lock: Option<false>) {
-        if (strategy == self.cookie_strategy) {
+    pub fn set_cookie_strategy(&mut self, strategy: String, have_lock: bool) {
+        if strategy == self.cookie_strategy {
             return;
         }
 
-        if (!have_lock) {
-            self.cookie_lock
+        let mut lock_guard: Option<MutexGuard<String>> = None;
+
+        if !have_lock {
+            lock_guard = Some(self.cookie_lock.lock().unwrap());
+        }
+
+        let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+            if self.cookie_strategy == "csrf" {
+                // Assuming self.session.as_mut().unwrap().cookies().clear() is how you clear cookies in reqwest.
+                if let Some(session) = self.session.as_mut() {
+                    //session.cookies().clear();
+                };
+                utils::get_yf_logger().debug(format!(
+                    "toggling cookie strategy {} -> basic",
+                    self.cookie_strategy
+                ));
+                self.cookie_strategy = "basic".to_string();
+            } else {
+                utils::get_yf_logger().debug(format!(
+                    "toggling cookie strategy {} -> csrf",
+                    self.cookie_strategy
+                ));
+                self.cookie_strategy = "csrf".to_string();
+            }
+            self.cookie = None;
+            self.crumb = None;
+        }));
+
+        if let Err(e) = result {
+            if !have_lock {
+                drop(lock_guard); // Explicitly release the lock if we acquired it.
+            }
+            std::panic::resume_unwind(e); // Re-throw the panic
+        }
+
+        if !have_lock {
+            drop(lock_guard); // Explicitly release the lock.
         }
     }
 }

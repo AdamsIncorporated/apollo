@@ -7,7 +7,7 @@ struct Logger {
     file: Mutex<File>,
 }
 
-impl Logger {
+pub impl Logger {
     fn new(filename: &str) -> Result<Logger, std::io::Error> {
         let file = File::create(filename)?;
         Ok(Logger {
