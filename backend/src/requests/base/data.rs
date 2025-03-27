@@ -25,7 +25,7 @@ pub impl YfData {
             crumb: None,
             cookie: None,
             cookie_strategy: "basic".to_string(),
-            cookie_lock: Mutex<String>,
+            cookie_lock: Mutex<String>
         }
     }
 
@@ -40,8 +40,6 @@ pub impl YfData {
             Some(value) => self.session = session,
             None => return,
         }
-
-        try { self.session.ca }
     }
 
     fn set_cookie_strategy(&self, strategy: &str, have_lock: Option<false>) {
@@ -50,7 +48,7 @@ pub impl YfData {
         } 
 
         if (!have_lock) {
-            self.cookie_lock.
+            self.cookie_lock
         }
     }
 }
