@@ -9,7 +9,7 @@ pub struct TickerBase {
     isin: Option<bool>,
     news: Option<Vec>,
     shares: Option<Vec>,
-    earnings: Option<Vec>,
+    earnings_dates: Option<Vec>,
     financials: Option<Vec>,
     data: YfData,
     price_history: Option<Vec>,
