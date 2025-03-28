@@ -1,18 +1,18 @@
 use crate::requests::contants;
 use crate::requests::data::YfData;
 
-pub struct TickerBase {
+pub struct TickerBase<T> {
     pub ticker: String,
     pub proxy: String,
     pub session: String,
     tz: Option<String>,
     isin: Option<bool>,
-    news: Option<Vec>,
-    shares: Option<Vec>,
-    earnings_dates: Option<Vec>,
-    financials: Option<Vec>,
+    news: Option<Vec<T>>,
+    shares: Option<Vec<T>>,
+    earnings_dates: Option<Vec<T>>,
+    financials: Option<Vec<T>>,
     data: YfData,
-    price_history: Option<Vec>,
+    price_history: Option<Vec<T>>,
     analysis: Option<String>,
     holders: Option<String>,
     quote: Option<String>,
