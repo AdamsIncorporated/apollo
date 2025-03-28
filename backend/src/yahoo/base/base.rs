@@ -1,24 +1,50 @@
-use crate::requests::contants;
-use crate::requests::data::YfData;
+use crate::yahoo::constants;
+use crate::yahoo::base::data::YfData;
 
-pub struct TickerBase<T> {
+pub struct TickerBase {
     pub ticker: String,
     pub proxy: String,
     pub session: String,
     tz: Option<String>,
     isin: Option<bool>,
-    news: Option<Vec<T>>,
-    shares: Option<Vec<T>>,
-    earnings_dates: Option<Vec<T>>,
-    financials: Option<Vec<T>>,
+    news: Option<Vec<String>>,
+    shares: Option<Vec<String>>,
+    earnings_dates: Option<Vec<String>>,
+    financials: Option<Vec<String>>,
     data: YfData,
-    price_history: Option<Vec<T>>,
+    price_history: Option<Vec<String>>,
     analysis: Option<String>,
     holders: Option<String>,
     quote: Option<String>,
     fundamentals: Option<String>,
     funds_data: Option<String>,
     fast_info: Option<String>,
+}
+
+#[derive(Clone)]
+pub struct PriceHistory<'a> {
+    data: &'a YfData,
+    ticker: &'a Ticker,
+    ticker_symbol: &'a TickerSymbol
+}
+
+#[derive(Clone)]
+struct Ticker {
+
+}
+#[derive(Clone)]
+struct TickerSymbol {
+
+}
+
+impl<'a> PriceHistory<'a> {
+    fn new(data: &'a YfData, ticker: &'a Ticker, ticker_symbol: &'a TickerSymbol) -> Self {
+        PriceHistory {
+            data,
+            ticker,
+            ticker_symbol,
+        }
+    }
 }
 
 enum LazyLoadResult {

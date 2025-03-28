@@ -3,11 +3,11 @@ use std::io::Write;
 use std::sync::Mutex;
 use std::time::{SystemTime, UNIX_EPOCH};
 
-struct Logger {
+pub struct Logger {
     file: Mutex<File>,
 }
 
-pub impl Logger {
+impl Logger {
     fn new(filename: &str) -> Result<Logger, std::io::Error> {
         let file = File::create(filename)?;
         Ok(Logger {

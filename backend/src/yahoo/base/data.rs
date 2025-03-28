@@ -7,6 +7,7 @@ use std::sync::{Mutex, OnceLock};
 
 const CACH_MAXSIZE: int8 = 64;
 
+#[derive(Clone)]
 pub struct YfData {
     pub user_agent_headers: String,
     session: Option<Client>,

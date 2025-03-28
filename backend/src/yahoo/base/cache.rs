@@ -6,7 +6,7 @@ pub struct CachLock<T> {
     mutex: Mutex<T>,
 }
 
-pub impl<T> CachLock<T> {
+impl<T> CachLock<T> {
     pub const fn new(value: T) -> Self {
         CachLock {
             mutex: Mutex::new(value),
@@ -25,7 +25,7 @@ pub struct CookieCacheException {
     message: String,
 }
 
-pub impl CookieCacheException {
+impl CookieCacheException {
     fn new(message: &str) -> Self {
         CookieCacheException {
             message: message.to_string(),
@@ -46,11 +46,12 @@ struct CookieCacheManager {
 }
 
 impl CookieCacheManager {
-    pub fn new(&self) {
-        cookie_cache = None
+    pub fn new(&self) -> Self {
+        CookieCacheManager { cookie_cache: None }
     }
 
-    pub fn get_cookie_cache(&self) -> Self {
-        if self.cookie_cache.is_none() {}
+    pub fn get_cookie_cache(&self) {
+        if self.cookie_cache.is_none() {
+        }
     }
 }
