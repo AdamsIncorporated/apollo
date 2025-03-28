@@ -1,13 +1,9 @@
-use crate::constants::USER_AGENTS;
-use crate::logger;
-use lru;
-use rand::Rng;
+use crate::yahoo::constants::user_agents::USER_AGENTS;
 use reqwest::Client;
-use std::sync::{Mutex, OnceLock};
+use std::sync::{Mutex, OnceLock, MutexGuard};
 
-const CACH_MAXSIZE: int8 = 64;
+const CACH_MAXSIZE: u8 = 64;
 
-#[derive(Clone)]
 pub struct YfData {
     pub user_agent_headers: String,
     session: Option<Client>,
@@ -17,9 +13,9 @@ pub struct YfData {
     cookie_lock: Mutex<String>,
 }
 
-pub impl YfData {
-    pub fn new(&self, session: session) {
-        let mut rng = rand::thread_rng();
+impl YfData {
+    pub fn new(&self, session: Option<Client>) {
+        let mut rng = rand::rng();
 
         YfData {
             user_agent_headers: USER_AGENTS.choose(&mut rng).unwrap_or(USER_AGENTS[0]),
@@ -33,8 +29,8 @@ pub impl YfData {
         self.set_session(&session);
     }
 
-    pub fn get_instance() -> &'static Mutex<YfData> {
-        static INTANCE: OnceLock<Mutex<YfData>> = OnceLock::new();
+    pub fn get_instance(&self, session: Option<Client>) -> &'static Mutex<YfData> {
+        static INSTANCE: OnceLock<Mutex<YfData>> = OnceLock::new();
         self.set_session(session);
         INSTANCE.get_or_init(|| Mutex::new(YfData::new(None)))
     }

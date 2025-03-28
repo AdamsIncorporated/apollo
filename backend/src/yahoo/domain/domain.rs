@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use crate::yahoo::base::data::YfData;
 
 pub struct Domain {
     pub proxy: Option<String>,
