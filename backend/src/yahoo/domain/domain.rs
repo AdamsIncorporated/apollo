@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 pub struct Domain {
     pub proxy: Option<String>,
     pub session: Option<String>,
@@ -6,7 +8,7 @@ pub struct Domain {
     data: YfData,
     pub symbol: String,
     pub ticker: String,
-    pub overview: std::collections::HashMap,
+    pub overview: HashMap<String, String>,
     pub top_companies: Vec<HashMap<String, String>>,
     pub research_reports: Vec<HashMap<String, String>>,
 }
@@ -16,7 +18,7 @@ impl Domain {
         
     }
 
-    fn fetch(&self, query_url: &str, proxy: any) -> HashMap {
+    fn fetch(&self, query_url: &str, proxy: &str) -> HashMap<String, String> {
         let params_dict: HashMap<String, String> = [
             ("formatted".to_string(), "true".to_string()),
             ("withReturns".to_string(), "true".to_string()),
@@ -27,9 +29,9 @@ impl Domain {
         .cloned()
         .collect();
 
-        let result = self._data.get_raw_json(
+        let result = self.data.get_raw_json(
             query_url,
-            &self._data.user_agent_headers,
+            &self.data.user_agent_headers,
             params_dict,
             proxy,
         )?;
