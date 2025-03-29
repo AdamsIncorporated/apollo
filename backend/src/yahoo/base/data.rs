@@ -1,8 +1,10 @@
 use crate::yahoo::constants::user_agents::USER_AGENTS;
-use crate::yahoo::base::utils;
+use crate::yahoo::base::logger::Logger;
 use reqwest::Client;
 use std::sync::{Mutex, MutexGuard};
 use rand::prelude::*;
+
+use super::logger;
 
 const CACH_MAXSIZE: u8 = 64;
 
@@ -39,6 +41,8 @@ impl YfData {
     }
 
     pub fn set_cookie_strategy(&mut self, strategy: String, have_lock: bool) {
+        let logger = logger::Logger::instance();
+
         if strategy == self.cookie_strategy {
             return;
         }
@@ -53,16 +57,12 @@ impl YfData {
             if self.cookie_strategy == "csrf" {
                 if let Some(session) = self.session.as_mut() {
                 };
-                utils::get_yf_logger().debug(format!(
+                logger.log(&format!(
                     "toggling cookie strategy {} -> basic",
                     self.cookie_strategy
                 ));
                 self.cookie_strategy = "basic".to_string();
             } else {
-                utils::get_yf_logger().debug(format!(
-                    "toggling cookie strategy {} -> csrf",
-                    self.cookie_strategy
-                ));
                 self.cookie_strategy = "csrf".to_string();
             }
             self.cookie = None;

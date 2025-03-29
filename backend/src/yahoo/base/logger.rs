@@ -1,6 +1,6 @@
 use std::fs::File;
 use std::io::Write;
-use std::sync::Mutex;
+use std::sync::{Mutex, OnceLock};
 use std::time::{SystemTime, UNIX_EPOCH};
 
 pub struct Logger {
@@ -15,7 +15,7 @@ impl Logger {
         })
     }
 
-    fn log(&self, message: &str) {
+    pub fn log(&self, message: &String) {
         let timestamp = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .unwrap()
@@ -30,5 +30,10 @@ impl Logger {
         } else {
             eprintln!("Failed to acquire lock on log file.");
         }
+    }
+
+    pub fn instance() -> &'static Logger {
+        static LOGGER: OnceLock<Logger> = OnceLock::new();
+        LOGGER.get_or_init(|| Logger::new("app.log").expect("Failed to create logger"))
     }
 }
