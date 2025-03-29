@@ -1,6 +1,8 @@
 use crate::yahoo::constants::user_agents::USER_AGENTS;
+use crate::yahoo::base::utils;
 use reqwest::Client;
-use std::sync::{Mutex, OnceLock, MutexGuard};
+use std::sync::{Mutex, MutexGuard};
+use rand::prelude::*;
 
 const CACH_MAXSIZE: u8 = 64;
 
@@ -18,27 +20,21 @@ impl YfData {
         let mut rng = rand::rng();
 
         YfData {
-            user_agent_headers: USER_AGENTS.choose(&mut rng).unwrap_or(USER_AGENTS[0]),
+            user_agent_headers: USER_AGENTS
+                .choose(&mut rng)
+                .unwrap_or(&USER_AGENTS[0])
+                .to_string(),
             session,
             crumb: None,
             cookie: None,
             cookie_strategy: "basic".to_string(),
             cookie_lock: Mutex::new(String::new()),
         };
-
-        self.set_session(&session);
     }
 
-    pub fn get_instance(&self, session: Option<Client>) -> &'static Mutex<YfData> {
-        static INSTANCE: OnceLock<Mutex<YfData>> = OnceLock::new();
-        self.set_session(session);
-        INSTANCE.get_or_init(|| Mutex::new(YfData::new(None)))
-    }
-
-    fn set_session(&self, session: session) {
-        match session {
-            Some(value) => self.session = session,
-            None => return,
+    fn set_session(&mut self, session: Option<Client>) {
+        if !session.is_none() {
+            self.session = session
         }
     }
 
@@ -55,9 +51,7 @@ impl YfData {
 
         let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
             if self.cookie_strategy == "csrf" {
-                // Assuming self.session.as_mut().unwrap().cookies().clear() is how you clear cookies in reqwest.
                 if let Some(session) = self.session.as_mut() {
-                    //session.cookies().clear();
                 };
                 utils::get_yf_logger().debug(format!(
                     "toggling cookie strategy {} -> basic",

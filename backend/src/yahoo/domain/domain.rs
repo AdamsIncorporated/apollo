@@ -1,5 +1,8 @@
 use std::collections::HashMap;
 use crate::yahoo::base::data::YfData;
+use polars::frame::DataFrame;
+use polars::prelude::*;
+use serde_json::Value;
 
 pub struct Domain {
     pub proxy: Option<String>,
@@ -39,4 +42,18 @@ impl Domain {
 
         Ok(result)
     }
+
+    fn parse_top_companies(
+        &self,
+        top_companies: &Vec<Value>,
+    ) -> Result<DataFrame, PolarsError> {
+        
+
+    }
+
+    // fn ensure_fetched(&self, attribute) {
+    //     if attribute.is_none() {
+    //         self.fetch_and_parse()
+    //     }
+    // }
 }

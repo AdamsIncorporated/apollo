@@ -1,5 +1,5 @@
-use crate::yahoo::constants;
 use crate::yahoo::base::data::YfData;
+use crate::yahoo::constants;
 
 pub struct TickerBase {
     pub ticker: String,
@@ -24,21 +24,17 @@ pub struct TickerBase {
 #[derive(Clone)]
 pub struct PriceHistory<'a> {
     data: &'a YfData,
-    ticker: &'a Ticker,
-    ticker_symbol: &'a TickerSymbol
+    ticker: &'a String,
+    ticker_symbol: &'a TickerSymbol,
 }
 
 #[derive(Clone)]
-struct Ticker {
-
-}
+struct Ticker {}
 #[derive(Clone)]
-struct TickerSymbol {
-
-}
+struct TickerSymbol {}
 
 impl<'a> PriceHistory<'a> {
-    fn new(data: &'a YfData, ticker: &'a Ticker, ticker_symbol: &'a TickerSymbol) -> Self {
+    fn new(data: &'a YfData, ticker: &'a String, ticker_symbol: &'a TickerSymbol) -> Self {
         PriceHistory {
             data,
             ticker,
@@ -47,31 +43,30 @@ impl<'a> PriceHistory<'a> {
     }
 }
 
-enum LazyLoadResult {
-    Loaded(PriceHistory),
+enum LazyLoadResult<'a> {
+    Loaded(PriceHistory<'a>),
     AlreadyLoaded,
 }
 
 impl TickerBase {
     fn lazy_load_price_history(&self) -> LazyLoadResult {
         if self.price_history.is_none() {
-            let price_history = PriceHistory::new(&self.data, &self.ticker, &self.get_ticker(&self.proxy));
-            self.price_history = Some(price_history.clone());
+            let price_history =
+                PriceHistory::new(&self.data, &self.ticker, &self.get_ticker(&self.proxy));
+            self.price_history = price_history;
             LazyLoadResult::Loaded(price_history)
         } else {
-            LazyLoadResult::AlreadyLoaded;
+            LazyLoadResult::AlreadyLoaded
         }
     }
 
-    fn get_ticker(&self, proxy: &str, timeout: &int32) {
+    fn get_ticker(&self, proxy: &str, timeout: &i32) {
         if proxy.is_none() {
             proxy = &self.proxy
-        } 
-
-        if !self.tz.is_none() {
-            return self.tz
         }
 
-        let c = ca
+        if !self.tz.is_none() {
+            return self.tz;
+        }
     }
 }
