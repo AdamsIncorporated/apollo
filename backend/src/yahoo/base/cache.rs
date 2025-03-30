@@ -18,8 +18,6 @@ impl<T> CachLock<T> {
     }
 }
 
-pub const CACH_INIT_LOCK: CachLock<i32> = CachLock::new(42);
-
 #[derive(Debug)]
 pub struct CookieCacheException {
     message: String,
@@ -41,17 +39,21 @@ impl fmt::Display for CookieCacheException {
 
 impl std::error::Error for CookieCacheException {}
 
-struct CookieCacheManager {
+static INSTANCE: OnceLock<Mutex<String>> = OnceLock::new();
+
+pub struct CookieCacheManager {
     cookie_cache: Option<String>,
 }
 
 impl CookieCacheManager {
+
     pub fn new(&self) -> Self {
         CookieCacheManager { cookie_cache: None }
     }
 
     pub fn get_cookie_cache(&self) {
         if self.cookie_cache.is_none() {
+            INSTANCE.get_or_init(|| Mutex::new(t))
         }
     }
 }

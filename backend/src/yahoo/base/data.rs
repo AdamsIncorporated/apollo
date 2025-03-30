@@ -71,13 +71,17 @@ impl YfData {
 
         if let Err(e) = result {
             if !have_lock {
-                drop(lock_guard); // Explicitly release the lock if we acquired it.
+                drop(lock_guard);
             }
-            std::panic::resume_unwind(e); // Re-throw the panic
+            std::panic::resume_unwind(e);
         }
 
         if !have_lock {
-            drop(lock_guard); // Explicitly release the lock.
+            drop(lock_guard);
         }
+    }
+
+    fn save_session_cookie(&self) {
+        let cookie_dict = 
     }
 }
