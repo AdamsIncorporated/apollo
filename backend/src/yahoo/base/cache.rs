@@ -46,14 +46,33 @@ pub struct CookieCacheManager {
 }
 
 impl CookieCacheManager {
-
-    pub fn new(&self) -> Self {
+    pub fn new() -> Self {
         CookieCacheManager { cookie_cache: None }
     }
 
-    pub fn get_cookie_cache(&self) {
-        if self.cookie_cache.is_none() {
-            INSTANCE.get_or_init(|| Mutex::new(t))
+    pub fn get_cookie_cache(&self) -> &'static Mutex<String> {
+        INSTANCE.get_or_init(|| Mutex::new(String::new()))
+    }
+}
+
+pub struct CookieCache {
+    pub initialized: i8,
+    pub db: Option<()>,
+    pub dummy: bool,
+}
+
+impl CookieCache {
+    pub fn new() -> Self {
+        CookieCache {
+            initialized: -1,
+            db: None,
+            dummy: false,
+        }
+    }
+
+    pub fn get_db(&self) -> Result<db, None> {
+        if !self.db.is_none() {
+            return self.db
         }
     }
 }
