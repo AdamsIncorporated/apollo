@@ -1,6 +1,6 @@
 use std::fmt;
 use std::sync::{Mutex, MutexGuard, OnceLock};
-use std::thread;
+use rusqlite::{params, Connection, Result as RusqliteResult};
 
 pub struct CachLock<T> {
     mutex: Mutex<T>,
@@ -57,22 +57,46 @@ impl CookieCacheManager {
 
 pub struct CookieCache {
     pub initialized: i8,
-    pub db: Option<()>,
+    pub db: Option<Connection>,
     pub dummy: bool,
 }
 
 impl CookieCache {
     pub fn new() -> Self {
+        // panic because I have no idea how this code works externally
+        let conn = Connection::open_in_memory().unwrap();
+
         CookieCache {
             initialized: -1,
-            db: None,
+            db: Some(conn),
             dummy: false,
         }
     }
 
-    pub fn get_db(&self) -> Result<db, None> {
+    pub fn get_db(&mut self) -> RusqliteResult<()> {
+        if let Some(conn) = self.db.take() {
+            conn.close();
+            Ok(())
+        } else {
+            Ok(())
+        }
+    }
+}
+
+
+pub struct TzDbManager {
+    db: Option<Connection>,
+    cach_dir: String
+}
+
+impl TzDbManager {
+    fn get_database() {
+
+    }
+
+    fn close_database(&self) {
         if !self.db.is_none() {
-            return self.db
+            self.db::Close();
         }
     }
 }

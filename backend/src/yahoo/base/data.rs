@@ -82,6 +82,6 @@ impl YfData {
     }
 
     fn save_session_cookie(&self) {
-        let cookie_dict = 
+        // let cookie_dict = 
     }
 }
