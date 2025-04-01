@@ -89,6 +89,37 @@ impl CookieCache {
 
         let db = self.get_db();
     }
+
+    pub fn lookup(&mut self, stratgey: String) {
+        if self.dummy {
+            return;
+        }
+
+        if self.initialized == -1 {
+            self.initialise();
+        }
+
+        if self.initialized == 0 {
+            return;
+        }
+    }
+
+    pub fn store(&mut self, stratgey: String, cookie: String) {
+        if self.dummy {
+            return;
+        }
+
+        if self.initialized == -1 {
+            self.initialise();
+        }
+
+        if self.initialized == 0 {
+            return;
+        }
+
+        let db = self.get_db();
+
+    }
 }
 
 pub struct CookieDBManager {
@@ -108,8 +139,8 @@ impl CookieDBManager {
     }
 
     pub fn get_database() -> &'static Mutex<CookieDBManager> {
-       static INSTANCE: OnceCell<Mutex<CookieDBManager>>  = OnceCell::new();
-       INSTANCE.get_or_init(|| Mutex::new(CookieDBManager::new()))
+        static INSTANCE: OnceCell<Mutex<CookieDBManager>> = OnceCell::new();
+        INSTANCE.get_or_init(|| Mutex::new(CookieDBManager::new()))
     }
 }
 
