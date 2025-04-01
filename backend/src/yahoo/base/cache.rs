@@ -1,5 +1,8 @@
-use rusqlite::{params, Connection, Result as RusqliteResult};
+use dirs_next::cache_dir;
+use once_cell::sync::OnceCell;
+use rusqlite::{Connection, Result as RusqliteResult};
 use std::fmt;
+use std::path::PathBuf;
 use std::sync::{Mutex, MutexGuard, OnceLock};
 
 pub struct CachLock<T> {
@@ -73,15 +76,40 @@ impl CookieCache {
         }
     }
 
-    pub fn get_db(&mut self) -> RusqliteResult<()> {
+    pub fn get_db(&mut self) {
         if let Some(conn) = self.db.take() {
             conn.close();
-            Ok(())
-        } else {
-            Ok(())
+        }
+    }
+
+    pub fn initialise(&mut self) {
+        if self.initialized != -1 {
+            return;
         }
 
-        match TzDbManager::new().
+        let db = self.get_db();
+    }
+}
+
+pub struct CookieDBManager {
+    db: Option<Connection>,
+    cache_dir: PathBuf,
+}
+
+impl CookieDBManager {
+    pub fn new() -> Self {
+        let cache_dir = cache_dir()
+            .map(|p| p.join("py-yfinance"))
+            .unwrap_or_else(|| PathBuf::from("py-yfinance"));
+        CookieDBManager {
+            db: None,
+            cache_dir: cache_dir,
+        }
+    }
+
+    pub fn get_database() -> &'static Mutex<CookieDBManager> {
+       static INSTANCE: OnceCell<Mutex<CookieDBManager>>  = OnceCell::new();
+       INSTANCE.get_or_init(|| Mutex::new(CookieDBManager::new()))
     }
 }
 
