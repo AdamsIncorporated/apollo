@@ -33,12 +33,12 @@ impl Domain {
         .cloned()
         .collect();
 
-        let result = self.data.get_raw_json(
-            query_url,
-            &self.data.user_agent_headers,
-            params_dict,
-            proxy,
-        )?;
+        // let result = self.data.get_raw_json(
+        //     query_url,
+        //     &self.data.user_agent_headers,
+        //     params_dict,
+        //     proxy,
+        // )?;
 
         Ok(result)
     }

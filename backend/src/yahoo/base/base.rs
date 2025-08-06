@@ -1,5 +1,4 @@
 use crate::yahoo::base::data::YfData;
-use crate::yahoo::constants;
 
 pub struct TickerBase {
     pub ticker: String,
@@ -49,24 +48,24 @@ enum LazyLoadResult<'a> {
 }
 
 impl TickerBase {
-    fn lazy_load_price_history(&self) -> LazyLoadResult {
-        if self.price_history.is_none() {
-            let price_history =
-                PriceHistory::new(&self.data, &self.ticker, &self.get_ticker(&self.proxy));
-            self.price_history = price_history;
-            LazyLoadResult::Loaded(price_history)
-        } else {
-            LazyLoadResult::AlreadyLoaded
-        }
-    }
+    // fn lazy_load_price_history(&self) -> LazyLoadResult {
+    //     if self.price_history.is_none() {
+    //         let price_history =
+    //             PriceHistory::new(&self.data, &self.ticker, &self.get_ticker(&self.proxy));
+    //         self.price_history = price_history;
+    //         LazyLoadResult::Loaded(price_history)
+    //     } else {
+    //         LazyLoadResult::AlreadyLoaded
+    //     }
+    // }
 
-    fn get_ticker(&self, proxy: &str, timeout: &i32) {
-        if proxy.is_none() {
-            proxy = &self.proxy
-        }
+    // fn get_ticker(&self, proxy: &str, timeout: &i32) {
+    //     if proxy.is_none() {
+    //         proxy = &self.proxy
+    //     }
 
-        if !self.tz.is_none() {
-            return self.tz;
-        }
-    }
+    //     if !self.tz.is_none() {
+    //         return self.tz;
+    //     }
+    // }
 }
